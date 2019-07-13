@@ -4,13 +4,17 @@ import software.amazon.awscdk.core.Construct;
 import software.amazon.awscdk.core.Duration;
 import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.core.StackProps;
-import software.amazon.awscdk.services.iam.User;
-import software.amazon.awscdk.services.iam.UserProps;
+import software.amazon.awscdk.services.iam.*;
 import software.amazon.awscdk.services.sns.Topic;
 import software.amazon.awscdk.services.sns.TopicProps;
 import software.amazon.awscdk.services.sns.subscriptions.SqsSubscription;
 import software.amazon.awscdk.services.sqs.Queue;
 import software.amazon.awscdk.services.sqs.QueueProps;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HelloStack extends Stack {
   public HelloStack(final Construct parent, final String id) {
@@ -36,5 +40,29 @@ public class HelloStack extends Stack {
 
     User user = new User(this, "MyUser", UserProps.builder().build());
     hello.grantRead(user);
+
+    Map<String, PolicyDocument> inlinePolicies = new HashMap<String, PolicyDocument>() {
+      {
+        put(
+            "ExamplePolicy",
+            new PolicyDocument(
+                PolicyDocumentProps.builder().withStatements(
+                    Collections.singletonList(new PolicyStatement(
+                        PolicyStatementProps.builder()
+                            .withEffect(Effect.ALLOW)
+                            .withActions(Arrays.asList(
+                                "cloudformation:Describe*",
+                                "cloudformation:List*",
+                                "cloudformation:Get*"
+                            ))
+                            .withResources(Collections.singletonList("*"))
+                            .build()
+                    ))
+                ).build()
+            )
+        );
+      }
+    };
+    new Role(this, "MyRole", RoleProps.builder().withAssumedBy(user).withRoleName("MyRole").withInlinePolicies(inlinePolicies).build());
   }
 }
