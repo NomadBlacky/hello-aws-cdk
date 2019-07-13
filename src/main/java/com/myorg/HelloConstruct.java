@@ -12,21 +12,22 @@ import java.util.List;
  * Example of a reusable construct. This one defines N buckets.
  */
 public class HelloConstruct extends Construct {
-    private final List<Bucket> buckets = new ArrayList<>();
+  private final List<Bucket> buckets = new ArrayList<>();
 
-    public HelloConstruct(final Construct parent, final String name, final HelloConstructProps props) {
-        super(parent, name);
+  public HelloConstruct(final Construct parent, final String name, final HelloConstructProps props) {
+    super(parent, name);
 
-        for (int i = 0; i < props.getBucketCount(); ++i) {
-            buckets.add(new Bucket(this, "Bucket" + String.valueOf(i), BucketProps.builder().build()));
-        }
+    for (int i = 0; i < props.getBucketCount(); ++i) {
+      buckets.add(new Bucket(this, "Bucket" + String.valueOf(i), BucketProps.builder().build()));
     }
+  }
 
-    /**
-     * Given an principal, grants it READ access on all buckets.
-     * @param grantee The principal (User, Group, Role)
-     */
-    public void grantRead(final IGrantable grantee) {
-        buckets.forEach(b -> b.grantRead(grantee, "*"));
-    }
+  /**
+   * Given an principal, grants it READ access on all buckets.
+   *
+   * @param grantee The principal (User, Group, Role)
+   */
+  public void grantRead(final IGrantable grantee) {
+    buckets.forEach(b -> b.grantRead(grantee, "*"));
+  }
 }

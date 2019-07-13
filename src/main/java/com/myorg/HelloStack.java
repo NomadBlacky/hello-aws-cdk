@@ -13,28 +13,28 @@ import software.amazon.awscdk.services.sqs.Queue;
 import software.amazon.awscdk.services.sqs.QueueProps;
 
 public class HelloStack extends Stack {
-    public HelloStack(final Construct parent, final String id) {
-        this(parent, id, null);
-    }
+  public HelloStack(final Construct parent, final String id) {
+    this(parent, id, null);
+  }
 
-    public HelloStack(final Construct parent, final String id, final StackProps props) {
-        super(parent, id, props);
+  public HelloStack(final Construct parent, final String id, final StackProps props) {
+    super(parent, id, props);
 
-        Queue queue = new Queue(this, "MyFirstQueue", QueueProps.builder()
-                .withVisibilityTimeout(Duration.seconds(300))
-                .build());
+    Queue queue = new Queue(this, "MyFirstQueue", QueueProps.builder()
+        .withVisibilityTimeout(Duration.seconds(300))
+        .build());
 
-        Topic topic = new Topic(this, "MyFirstTopic", TopicProps.builder()
-                .withDisplayName("My First Topic Yeah")
-                .build());
+    Topic topic = new Topic(this, "MyFirstTopic", TopicProps.builder()
+        .withDisplayName("My First Topic Yeah")
+        .build());
 
-        topic.addSubscription(new SqsSubscription(queue));
+    topic.addSubscription(new SqsSubscription(queue));
 
-        HelloConstruct hello = new HelloConstruct(this, "Buckets", HelloConstructProps.builder()
-                .withBucketCount(5)
-                .build());
+    HelloConstruct hello = new HelloConstruct(this, "Buckets", HelloConstructProps.builder()
+        .withBucketCount(5)
+        .build());
 
-        User user = new User(this, "MyUser", UserProps.builder().build());
-        hello.grantRead(user);
-    }
+    User user = new User(this, "MyUser", UserProps.builder().build());
+    hello.grantRead(user);
+  }
 }
